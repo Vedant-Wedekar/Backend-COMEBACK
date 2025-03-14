@@ -1,0 +1,20 @@
+1...create repo 
+2...npm init
+3...npm i express dotenv
+4...entry point index.js 
+	const express = require('express')
+	const app = express();
+	
+	require....dotenv
+	
+	app.get('/',(req,res)=>{
+	res.send("heyy ved")
+})
+	
+	app.listen(process.env.PORT,()=>{
+	console.log(`SERVER IS RUNNING ${process.env.PORT}`)
+})
+
+5... gitignore
+	node_modules
+	.env
