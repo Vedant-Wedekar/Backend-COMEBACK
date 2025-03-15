@@ -1,0 +1,10 @@
+type module 
+array of object   joke
+json formattter
+
+
+jokes.map(()=.{
+
+})
+
+npm i axios
