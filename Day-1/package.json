@@ -1,0 +1,22 @@
+{
+  "name": "backend-comeback",
+  "version": "1.0.0",
+  "description": "A new start a new learning",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "node",
+    "coffee",
+    "pokemon",
+    "ved",
+    "anu"
+  ],
+  "author": "TG VED",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
