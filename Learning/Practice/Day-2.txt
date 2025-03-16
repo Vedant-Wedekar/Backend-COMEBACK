@@ -8,3 +8,21 @@ jokes.map(()=.{
 })
 
 npm i axios
+
+frontend & backend both have same /api/jokes route and localhost:3000
+
+
+
+proxyyy  
+server: {
+    proxy: {
+      '/api':{target:'http://localhost:3000',
+      changeOrigin: true} 
+    }
+  },
+
+
+  npm run build     app.use(express.static('dist'))
+
+
+  
