@@ -1,11 +1,9 @@
-To define the structure of data, we use a Schema.  
-Here is the boilerplate code for every model:  
+Defining Data Structure with Mongoose Schema
+In Mongoose, a Schema is used to define the structure of data in a MongoDB collection. It ensures data consistency and validation.
 
-
-
+Boilerplate Code for a Mongoose Model:
+eg:
 import mongoose from 'mongoose';
-
-
 
 const userSchema = new mongoose.Schema({
     userName: {
@@ -13,12 +11,51 @@ const userSchema = new mongoose.Schema({
         required: true
     }
 });
-
+******************************************************************************************************************************************************
 export const User = mongoose.model('User', userSchema);
+Timestamps in Mongoose
+The timestamps option in Mongoose adds two fields to a schema automatically:
 
+createdAt – Stores the date and time when the document was created.
+updatedAt – Updates the timestamp whenever the document is modified.
+Example Usage:
 
-new topic is timestamps  use as a secondary object which gives two properties 
-            a. createdAt
-            b. updatedAt
+eg:
+const userSchema = new mongoose.Schema(
+    {
+        userName: { type: String, required: true }
+    },
+    { timestamps: true }
+);
+**************************************************************************************************************************************************
+Why is productImage a String?
+Reason: Images are stored on third-party services like Cloudinary or AWS S3, which provide a URL. Since a URL is a string, productImage is stored as a string in the database.
 
+Example: After uploading, Cloudinary returns a URL like:
 
+eg:
+"https://res.cloudinary.com/example/image.jpg"
+This URL is then saved in the productImage field.
+
+Schema Example:
+
+:
+productImage: {
+    type: String
+}
+
+**********************************************************************************************************************************************
+Using enum for Restricted Values
+Reason: The enum attribute restricts the gender field to predefined values, ensuring only "Male" or "Female" can be stored in the database.
+
+Example: If a user tries to enter "Other" or "Unknown", Mongoose will reject it because it’s not listed in enum.
+
+Schema Example (Fixed enum issue):
+
+eg:
+gender: {
+    type: String,
+    enum: ["Male", "Female"],
+    required: true
+}
+**********************************************************************************************************************************************
