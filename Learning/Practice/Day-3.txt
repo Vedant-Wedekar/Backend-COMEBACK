@@ -5,6 +5,8 @@ Here is the boilerplate code for every model:
 
 import mongoose from 'mongoose';
 
+
+
 const userSchema = new mongoose.Schema({
     userName: {
         type: String,
@@ -14,5 +16,9 @@ const userSchema = new mongoose.Schema({
 
 export const User = mongoose.model('User', userSchema);
 
+
+new topic is timestamps  use as a secondary object which gives two properties 
+            a. createdAt
+            b. updatedAt
 
 
