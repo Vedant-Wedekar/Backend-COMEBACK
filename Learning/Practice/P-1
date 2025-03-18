@@ -1,0 +1,46 @@
+Today's Learnings: Full-Stack Project Setup
+
+
+1. Initialize the Project
+Run npm init to create package.json.
+                         ****************************************************************
+2. Public Folder & Temporary Files
+Create a public folder.
+Inside public, create a temp folder.
+Add a .gitkeep file inside public to ensure the folder is tracked by Git even when empty.
+                         ****************************************************************
+3. Creating the src Folder
+Use mkdir src to create the src folder.
+Inside src, create essential subfolders:
+controllers/
+db/
+middlewares/
+models/
+routes/
+utils/
+Also, create necessary files in src:
+app.js
+constants.js
+index.js
+                         ****************************************************************
+4. Terminal Commands I Learned
+mkdir → Create directories.
+cd → Change directory.
+ls → List files and folders.
+cd . → Stay in the current directory.
+                         ****************************************************************
+5. Adding Important Files
+Created .env for environment variables.
+Created .gitignore to prevent unnecessary files from being committed.
+                         ****************************************************************
+6. Setting Up Prettier for Code Formatting
+Installed Prettier as a dev dependency:
+npm i -D prettier
+Added configuration files:
+.prettierrc
+.prettierignore
+                         ****************************************************************
+7. Using Nodemon for Development
+Installed and used Nodemon to restart the server automatically:
+nodemon src/index.js
+                         ****************************************************************
