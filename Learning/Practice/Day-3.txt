@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
         required: true
     }
 });
+export const User = mongoose.model("User",userschema)
 ******************************************************************************************************************************************************
 export const User = mongoose.model('User', userSchema);
 Timestamps in Mongoose
