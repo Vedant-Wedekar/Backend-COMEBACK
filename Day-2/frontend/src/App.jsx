@@ -17,7 +17,7 @@ const App = () => {
     <div>
       <h1>Jokes Generator</h1>
       <p>Jokes: {jokes.length}</p>
-      
+
       {jokes.map((joke, index) => (
         <div key={index}>
           <h2>{joke.title}</h2>

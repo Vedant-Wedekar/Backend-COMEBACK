@@ -14,6 +14,5 @@ catch(error){
 }
 
 
-
 }
 export default DBconnect
