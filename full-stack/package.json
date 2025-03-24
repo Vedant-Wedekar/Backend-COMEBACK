@@ -9,7 +9,7 @@
   },
   "author": "TG VED",
   "license": "ISC",
-  "description": "",
+  "description": "Backend Comeback",
   "devDependencies": {
     "nodemon": "^3.1.9"
   },
