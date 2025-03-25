@@ -1,0 +1,57 @@
+// How to Not Screw Up While Setting Up a Node.js Project with MongoDB
+// 1] Updating the dev Script (Because We Are Not Cavemen)
+// First, we tweak our package.json dev script to make sure our server restarts automatically with nodemon and loads environment variables from dotenv. Because manually restarting servers is so last decade.
+
+
+// "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+
+// Why? Because we don't have time to CTRL+C and restart our server every time we change a semicolon.
+
+// 2] Creating an Async Function for Database Connection (Because Sync Code Is for Boomers)
+// Now, we create an async/await function to connect our app to MongoDB Atlas. And since we're not fans of mysterious, silent failures, we wrap it inside a try-catch block.
+
+// Here’s the magic:
+
+// import mongoose from 'mongoose';
+// import { DB_NAME } from '../constants.js';
+
+// const DBconnect = async () => {
+//   try {
+//     const connection = await mongoose.connect(`${process.env.MONGODB_URI}/${DB_NAME}`);
+//     console.log(`✅ DB connected: ${connection.connection.host}`);
+//   } catch (error) {
+//     console.error("❌ DB connection failed:", error);
+//     process.exit(1); // Because what's the point of running if we can't even connect to the DB?
+//   }
+// };
+
+// export default DBconnect;
+// Why?
+// Because writing .then().catch() chains in 2025 is like using a floppy disk.
+
+// 3] The .env Setup (Because Secrets Are Not for GitHub)
+// Now, let’s make sure our environment variables are loaded before everything explodes.
+
+
+// // require('dotenv').config({ path: './config.env' }) // If you're living in the CommonJS era.
+// import dotenv from 'dotenv';
+// import mongoose from 'mongoose';
+// import { DB_NAME } from './constants.js';
+// import DBconnect from './db/index.js';
+
+// // Load environment variables from config.env  
+// dotenv.config({ path: './config.env' });
+
+// // Connect to the database
+// DBconnect();
+// Wait... Why are we doing this again?
+// Oh yeah, because hardcoding credentials is a one-way ticket to getting hacked.
+
+// Summary (For the Lazy Ones)
+// We update dev to use nodemon and auto-load environment variables.
+
+// We create a proper async/await function for MongoDB connection with a try-catch, because debugging is already painful enough.
+
+// We use dotenv.config() so that our precious credentials don’t accidentally end up in a GitHub repo.
+
+// And boom! You’re now slightly less of a noob in setting up a backend. 🎉
