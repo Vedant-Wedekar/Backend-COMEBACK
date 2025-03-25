@@ -9,9 +9,13 @@ app.use(express.static('dist'))
 app.use(cookieParser())
 app.use(cors({credentials:true,origin:process.env.CLIENT_URL}))
 
+// import routes
+import { UserRouter } from './routes/user.routes.js';
+
+
+// use routes
+app.use('/api/v1/users',UserRouter);
 
 
 
-
-
-export {app}
+export { app };
