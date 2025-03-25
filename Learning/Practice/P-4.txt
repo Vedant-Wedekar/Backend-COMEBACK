@@ -1,0 +1,211 @@
+Project Setup: Backend with Error Handling, Uploads, and Models
+Welcome to "Backend Chronicles: The Struggle is Real."
+You're building a backend that supports file uploads, authentication, and video handling. Let's go step by step before your brain explodes. 💥
+
+1️⃣ ApiError.js – Because Bugs Deserve a Proper Error Message
+Ever seen a backend that crashes but refuses to tell you why? We don't do that here. Meet ApiError.js, which ensures we throw meaningful errors instead of crying in silence.
+
+class ApiError extends Error {
+    constructor(statusCode, message = "Something went wrong", error = [], stack = "") {
+        super(message);
+        this.statusCode = statusCode;
+        this.error = error;
+        this.data = null;
+        this.success = false;
+
+        if (stack) {
+            this.stack = stack;
+        } else {
+            Error.captureStackTrace(this, this.constructor);
+        }
+    }
+}
+
+export { ApiError };
+🔹 What this does:
+
+Helps you throw structured errors instead of "undefined is not a function" mysteries.
+
+Captures the error stack to help you track where you messed up.
+
+2️⃣ asyncHandler.js – Handling Async Without Crying
+If you’ve ever written a backend route and forgot to wrap it in a try-catch, congratulations—you created an unhandled rejection. 🙃
+Here's asyncHandler.js to make life easier:
+
+const asyncHandler = (requestHandler) => (req, res, next) => {
+    Promise.resolve(requestHandler(req, res, next)).catch(next);
+};
+
+export { asyncHandler };
+🔹 What this does:
+
+No more manually writing try-catch in every route.
+
+Catches async errors before they turn your backend into a disaster movie.
+
+3️⃣ ApiResponse.js – Because Clients Need a Proper Response
+You don't just scream errors at your frontend; you send structured responses like a civilized developer.
+
+
+class ApiResponse {
+    constructor(statusCode, message = "Success", data = null) {
+        this.statusCode = statusCode;
+        this.message = message;
+        this.success = statusCode >= 200 && statusCode < 300;
+        this.data = data;
+    }
+}
+
+export { ApiResponse };
+🔹 Why this is cool:
+
+Ensures that every API response follows a consistent structure.
+
+If something succeeds, it says "Success." If not, it screams failure properly.
+
+4️⃣ cloudinary.js – Uploading Files Like a Boss
+Uploading files? Don't just dump them on your server like a savage—use Cloudinary.
+
+
+import { v2 as cloudinary } from 'cloudinary';
+import fs from 'fs';
+
+// Configuration
+cloudinary.config({ 
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+    api_key: process.env.CLOUDINARY_API_KEY, 
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+const uploadOnCloudinary = async (file) => {
+    try {
+        if (!file) {
+            throw new Error('No file uploaded');
+        }
+
+        const result = await cloudinary.uploader.upload(file.path, { resource_type: 'auto' });
+
+        console.log("File uploaded successfully", result.url);
+        return result;
+    } catch (error) {
+        fs.unlinkSync(file.path); // Clean up the mess
+        console.log(error);
+        return null;
+    }
+};
+
+export { uploadOnCloudinary };
+🔹 Key takeaways:
+
+If the upload fails, we clean up the local file (so your disk doesn’t fill up with trash).
+
+The resource_type: 'auto' lets Cloudinary decide if it's an image, video, or meme.
+
+5️⃣ multer.middleware.js – Handling File Uploads Like a Pro
+Multer helps accept files, but don’t trust users too much—they’ll try to upload their tax returns instead of videos.
+
+
+import multer from 'multer';
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './public/temp'); // Temporary storage
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname); // Keeping original names because why not
+    }
+});
+
+const upload = multer({ storage: storage });
+
+export { upload };
+🔹 Key points:
+
+Saves files temporarily before sending them to Cloudinary.
+
+Doesn't rename them (which may or may not be a good idea).
+
+6️⃣ video.model.js – Because Backend is Useless Without a Database
+A schema for videos because, well, you need to store them somewhere.
+
+
+import mongoose, { Schema } from 'mongoose';
+import mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2';
+
+const videoSchema = new Schema({
+    videoFile: { type: String, required: true },
+    thumbnail: { type: String, required: true },
+    owner: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], 
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    duration: { type: Number },
+    view: { type: Number, required: true, default: 0 },
+    isPublished: { type: Boolean, required: true, default: true },
+}, { timestamps: true });
+
+videoSchema.plugin(mongooseAggregatePaginate);
+
+export const Video = mongoose.model("Video", videoSchema);
+🔹 Mistakes fixed:
+
+Fixed mongoose.Schema.Type.ObjectId → should be mongoose.Schema.Types.ObjectId
+
+Fixed boolean → should be Boolean
+
+Added timestamps: true to track when videos were uploaded
+
+7️⃣ user.model.js – Storing Users and Making Them Log In
+A schema for users because everyone needs an account to spam videos.
+
+
+import mongoose, { Schema } from 'mongoose';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+
+const userSchema = new Schema({
+    username: { type: String, required: true, unique: true, trim: true, index: true },
+    watchHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Video' }], 
+    email: { type: String, required: true, unique: true, trim: true, lowercase: true },
+    fullName: { type: String, required: true, trim: true, lowercase: true, index: true },
+    avatar: { type: String, required: true },
+    coverImage: { type: String },
+    password: { type: String, required: true },
+    refreshToken: { type: String }
+}, { timestamps: true });
+
+// Password Hashing Before Saving
+userSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) return next();
+    this.password = await bcrypt.hash(this.password, 10);
+});
+
+// Compare Passwords
+userSchema.methods.isPasswordCorrect = async function (password) {
+    return await bcrypt.compare(password, this.password);
+};
+
+// Generate JWT Tokens
+userSchema.methods.generateAccessToken = function () {
+    return jwt.sign(
+        { id: this._id, username: this.username, email: this.email, fullName: this.fullName },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN }
+    );
+};
+
+userSchema.methods.generateRefreshToken = function () {
+    return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN });
+};
+
+export const User = mongoose.model('User', userSchema);
+🔹 What’s cool here:
+
+Password hashing before saving, so you don’t store passwords in plaintext like a noob.
+
+JWT access and refresh tokens, because logging in every 5 minutes is annoying.
+
+Final Thoughts
+🔥 Congratulations! You just set up a solid backend structure with proper error handling, file uploads, database models, and authentication.
+Now go build something epic—or at least something that doesn’t crash every 5 minutes. 🚀
+
+
