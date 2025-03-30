@@ -21,6 +21,7 @@ class ApiError extends Error {
     }
 }
 
+
 export { ApiError };
 🔹 What this does:
 
@@ -128,7 +129,6 @@ Doesn't rename them (which may or may not be a good idea).
 6️⃣ video.model.js – Because Backend is Useless Without a Database
 A schema for videos because, well, you need to store them somewhere.
 
-
 import mongoose, { Schema } from 'mongoose';
 import mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2';
 
@@ -207,5 +207,57 @@ JWT access and refresh tokens, because logging in every 5 minutes is annoying.
 Final Thoughts
 🔥 Congratulations! You just set up a solid backend structure with proper error handling, file uploads, database models, and authentication.
 Now go build something epic—or at least something that doesn’t crash every 5 minutes. 🚀
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
