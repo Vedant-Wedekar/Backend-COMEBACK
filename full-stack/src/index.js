@@ -4,7 +4,10 @@ import mongoose, { connect } from 'mongoose';
 import {DB_NAME} from './constants.js'
 import DBconnect from './db/index.js';
 import { app } from '../src/app.js'
-dotenv.config({path:'./config.env'});
+// import dotenv from "dotenv";
+// dotenv.config();
+
+dotenv.config({path:'./.env'});
 DBconnect().then(() => {
     app.listen(process.env.PORT,()=>{console.log(`server is running on port ${process.env.PORT}`)})
     app.on("error",(error)=>{
